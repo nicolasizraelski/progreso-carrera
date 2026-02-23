@@ -378,17 +378,6 @@
             </div>
             <div class="progress-item">
                 <div class="progress-label">
-                    <span>Horas Semanales</span>
-                    <span class="progress-numbers" id="horas-count">0 / 0 hs</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill-cursada" id="horas-cursada-bar" style="width:0%"></div>
-                    <div class="progress-fill-aprobada" id="horas-aprobada-bar" style="width:0%"></div>
-                </div>
-                <div class="progress-detail" id="horas-detail">0 hs aprobadas · 0 hs cursadas</div>
-            </div>
-            <div class="progress-item">
-                <div class="progress-label">
                     <span>Progreso General</span>
                     <span class="progress-numbers" id="pct-count">0%</span>
                 </div>
@@ -686,13 +675,6 @@ function updateProgressBars() {
     document.getElementById('materias-cursada-bar').style.width = matCursadaPct + '%';
     document.getElementById('materias-count').textContent = `${stats.aprobadasCount} / ${stats.totalMaterias}`;
     document.getElementById('materias-detail').textContent = `${stats.aprobadasCount} aprobadas · ${stats.cursadasCount} cursadas`;
-
-    const horasAprobadaPct = (stats.horasAprobadas / stats.totalHoras * 100);
-    const horasCursadaPct = ((stats.horasAprobadas + stats.horasCursadas) / stats.totalHoras * 100);
-    document.getElementById('horas-aprobada-bar').style.width = horasAprobadaPct + '%';
-    document.getElementById('horas-cursada-bar').style.width = horasCursadaPct + '%';
-    document.getElementById('horas-count').textContent = `${stats.horasAprobadas} / ${stats.totalHoras} hs`;
-    document.getElementById('horas-detail').textContent = `${stats.horasAprobadas} hs aprobadas · ${stats.horasCursadas} hs cursadas`;
 
     const pct = Math.round(stats.aprobadasCount / stats.totalMaterias * 100);
     document.getElementById('pct-bar').style.width = pct + '%';
