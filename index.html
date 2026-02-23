@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progreso - Ing. en Sistemas de Información - UTN FRBA</title>
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --bg-card: #131829;
+            --bg-card-hover: #1a2035;
+            --border: #2a3050;
+            --text: #e0e4f0;
+            --text-dim: #7a8099;
+            --no-cursada: #2a3050;
+            --cursada: #b8860b;
+            --cursada-bg: rgba(184, 134, 11, 0.15);
+            --cursada-border: #b8860b;
+            --aprobada: #22c55e;
+            --aprobada-bg: rgba(34, 197, 94, 0.15);
+            --aprobada-border: #22c55e;
+            --locked: #ff4757;
+            --locked-bg: rgba(255, 71, 87, 0.08);
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --year-1: #6366f1;
+            --year-2: #8b5cf6;
+            --year-3: #a855f7;
+            --year-4: #d946ef;
+            --year-5: #ec4899;
+            --integrador: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #131829 0%, #1a1040 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-light), var(--year-5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* Progress bars in header */
+        .progress-container {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 180px;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--no-cursada);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill-aprobada {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .progress-fill-cursada {
+            height: 100%;
+            background: linear-gradient(90deg, #b8860b, #d4a017);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .progress-numbers {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .progress-detail {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent);
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 15px;
+            padding: 10px 30px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        /* Main map */
+        .map-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 30px 30px;
+            position: relative;
+        }
+
+        /* SVG for arrows */
+        .arrows-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .arrows-svg path {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 1.5;
+            opacity: 0.35;
+            transition: all 0.3s;
+        }
+
+        .arrows-svg path.active {
+            stroke: var(--aprobada);
+            opacity: 0.6;
+            stroke-width: 1.8;
+        }
+
+        .arrows-svg path.cursada-arrow {
+            stroke: var(--cursada);
+            opacity: 0.5;
+        }
+
+        /* Arrowhead markers */
+        .arrows-svg marker path {
+            opacity: 1;
+        }
+
+        /* Year rows */
+        .year-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+            align-items: stretch;
+            position: relative;
+            z-index: 2;
+        }
+
+        .year-label {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            padding: 12px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 48px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .year-1-label { background: linear-gradient(180deg, rgba(99,102,241,0.3), rgba(99,102,241,0.1)); color: var(--year-1); border: 1px solid rgba(99,102,241,0.3); }
+        .year-2-label { background: linear-gradient(180deg, rgba(139,92,246,0.3), rgba(139,92,246,0.1)); color: var(--year-2); border: 1px solid rgba(139,92,246,0.3); }
+        .year-3-label { background: linear-gradient(180deg, rgba(168,85,247,0.3), rgba(168,85,247,0.1)); color: var(--year-3); border: 1px solid rgba(168,85,247,0.3); }
+        .year-4-label { background: linear-gradient(180deg, rgba(217,70,239,0.3), rgba(217,70,239,0.1)); color: var(--year-4); border: 1px solid rgba(217,70,239,0.3); }
+        .year-5-label { background: linear-gradient(180deg, rgba(236,72,153,0.3), rgba(236,72,153,0.1)); color: var(--year-5); border: 1px solid rgba(236,72,153,0.3); }
+
+        .year-subjects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            flex: 1;
+            align-content: flex-start;
+            padding: 6px 0;
+        }
+
+        /* Subject cards */
+        .subject-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            min-width: 170px;
+            max-width: 210px;
+            flex: 1 1 170px;
+            user-select: none;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .subject-card.locked {
+            opacity: 0.4;
+            border-color: rgba(255, 71, 87, 0.3);
+            cursor: not-allowed;
+        }
+
+        .subject-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .subject-card.no-cursada {
+            border-color: var(--border);
+        }
+
+        .subject-card.cursada {
+            border-color: var(--cursada-border);
+            background: var(--cursada-bg);
+            box-shadow: 0 0 12px rgba(184, 134, 11, 0.1);
+        }
+
+        .subject-card.aprobada {
+            border-color: var(--aprobada-border);
+            background: var(--aprobada-bg);
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.1);
+        }
+
+        .subject-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .subject-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.68rem;
+            color: var(--text-dim);
+            gap: 6px;
+        }
+
+        .subject-code {
+            opacity: 0.7;
+        }
+
+        .subject-hours {
+            background: rgba(255,255,255,0.06);
+            padding: 2px 7px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .subject-period-tag {
+            font-size: 0.6rem;
+            padding: 1px 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        .subject-state-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+        }
+
+        .subject-card.no-cursada .subject-state-indicator { background: var(--no-cursada); border: 1px solid var(--border); }
+        .subject-card.cursada .subject-state-indicator { background: var(--cursada); box-shadow: 0 0 6px var(--cursada); }
+        .subject-card.aprobada .subject-state-indicator { background: var(--aprobada); box-shadow: 0 0 6px var(--aprobada); }
+        .subject-card.locked .subject-state-indicator { background: var(--locked); opacity: 0.5; }
+
+        .integrador-badge {
+            position: absolute;
+            top: -1px;
+            left: 12px;
+            background: var(--integrador);
+            color: #000;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 0 0 4px 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .electiva-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.55rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        /* Tooltip / popup */
+        .tooltip-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 500;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .tooltip-overlay.active { display: flex; align-items: center; justify-content: center; }
+
+        .tooltip-box {
+            background: #1a2035;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px 28px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .tooltip-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .tooltip-code {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 14px;
+        }
+
+        .tooltip-section {
+            margin-bottom: 12px;
+        }
+
+        .tooltip-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+
+        .tooltip-list {
+            font-size: 0.8rem;
+            padding-left: 16px;
+            line-height: 1.7;
+        }
+
+        .tooltip-list li.met { color: var(--aprobada); }
+        .tooltip-list li.unmet { color: var(--locked); }
+        .tooltip-list li.partial { color: var(--cursada); }
+
+        .tooltip-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .tooltip-btn {
+            flex: 1;
+            padding: 9px;
+            border-radius: 7px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tooltip-btn.set-no-cursada {
+            background: var(--no-cursada);
+            color: var(--text);
+        }
+
+        .tooltip-btn.set-cursada {
+            background: rgba(184, 134, 11, 0.3);
+            color: var(--cursada);
+            border: 1px solid var(--cursada);
+        }
+
+        .tooltip-btn.set-aprobada {
+            background: rgba(34, 197, 94, 0.3);
+            color: var(--aprobada);
+            border: 1px solid var(--aprobada);
+        }
+
+        .tooltip-btn:hover { filter: brightness(1.2); }
+        .tooltip-btn.active-state { box-shadow: 0 0 0 2px #fff; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .subject-card { min-width: 145px; max-width: 190px; }
+        }
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; align-items: flex-start; }
+            .progress-container { width: 100%; }
+            .progress-item { flex: 1; min-width: 140px; }
+            .year-row { flex-direction: column; }
+            .year-label { writing-mode: horizontal-tb; transform: none; min-width: auto; padding: 8px 14px; }
+            .subject-card { max-width: 100%; }
+            .map-container { padding: 20px 15px; }
+        }
+
+        /* Year progress mini bars */
+        .year-progress {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 5px;
+        }
+
+        .year-progress-bar {
+            height: 4px;
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .year-progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .year-progress-text {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        .ultima-exigencia {
+            font-size: 0.6rem;
+            color: var(--year-5);
+            font-style: italic;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div>
+            <h1>Ingeniería en Sistemas de Información</h1>
+            <div class="header-subtitle">UTN FRBA — Plan 2008 (Ordenanza 1150)</div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Materias</span>
+                    <span class="progress-numbers" id="materias-count">0 / 42</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill-cursada" id="materias-cursada-bar" style="width:0%"></div>
+                    <div class="progress-fill-aprobada" id="materias-aprobada-bar" style="width:0%"></div>
+                </div>
+                <div class="progress-detail" id="materias-detail">0 aprobadas · 0 cursadas</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Horas Semanales</span>
+                    <span class="progress-numbers" id="horas-count">0 / 248</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill-cursada" id="horas-cursada-bar" style="width:0%"></div>
+                    <div class="progress-fill-aprobada" id="horas-aprobada-bar" style="width:0%"></div>
+                </div>
+                <div class="progress-detail" id="horas-detail">0 hs aprobadas · 0 hs cursadas</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Progreso General</span>
+                    <span class="progress-numbers" id="pct-count">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill-aprobada" id="pct-bar" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn" onclick="resetAll()">Resetear</button>
+            <button class="btn" onclick="exportData()">Exportar</button>
+        </div>
+    </div>
+</div>
+
+<div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--locked);opacity:0.5"></div> Bloqueada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--no-cursada);border:1px solid var(--border)"></div> Habilitada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cursada)"></div> Cursada (Regular)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--aprobada)"></div> Aprobada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--integrador)"></div> Integradora</div>
+    <span style="color:var(--text-dim);font-size:0.75rem;margin-left:10px">Click en una materia para ver detalles</span>
+</div>
+
+<div class="map-container" id="map-container">
+    <!-- Rendered by JS -->
+</div>
+
+<div class="tooltip-overlay" id="tooltip-overlay" onclick="closeTooltip(event)">
+    <div class="tooltip-box" id="tooltip-box" onclick="event.stopPropagation()">
+        <div class="tooltip-title" id="tt-title"></div>
+        <div class="tooltip-code" id="tt-code"></div>
+        <div id="tt-body"></div>
+        <div class="tooltip-actions" id="tt-actions"></div>
+    </div>
+</div>
+
+<script>
+// ========== DATA ==========
+// All correlatives are stored as-is from the official plan.
+// Arrow drawing uses transitive reduction to avoid visual clutter.
+const subjects = [
+    // === 1° NIVEL ===
+    { id: "950701", name: "Álgebra y Geometría Analítica", code: "950701", hours: 5, year: 1, period: "Anual",
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "950702", name: "Análisis Matemático I", code: "950702", hours: 5, year: 1, period: "Anual",
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "082020", name: "Matemática Discreta", code: "082020", hours: 3, year: 1, period: "Anual",
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "082021", name: "Algoritmos y Estructura de Datos", code: "082021", hours: 5, year: 1, period: "Anual",
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "082022", name: "Arquitectura de Computadoras", code: "082022", hours: 4, year: 1, period: "Anual",
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "082023", name: "Sistemas y Organizaciones", code: "082023", hours: 3, year: 1, period: "Anual", integrador: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "081420", name: "Química", code: "081420", hours: 3, year: 1, period: "1C",
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "081604", name: "Ingeniería y Sociedad", code: "081604", hours: 4, year: 1, period: "2C",
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+
+    // === 2° NIVEL ===
+    { id: "082024", name: "Análisis de Sistemas", code: "082024", hours: 6, year: 2, period: "Anual", integrador: true,
+        cursarCursada: ["082023", "082021"], cursarAprobada: [],
+        finalAprobada: ["082023", "082021"] },
+    { id: "951601", name: "Sistemas de Representación", code: "951601", hours: 3, year: 2, period: "Anual",
+        cursarCursada: [], cursarAprobada: [],
+        finalAprobada: [] },
+    { id: "950703", name: "Análisis Matemático II", code: "950703", hours: 5, year: 2, period: "Anual",
+        cursarCursada: ["950702", "950701"], cursarAprobada: [],
+        finalAprobada: ["950702", "950701"] },
+    { id: "082025", name: "Sintaxis y Semántica de los Lenguajes", code: "082025", hours: 4, year: 2, period: "Anual",
+        cursarCursada: ["082020", "082021"], cursarAprobada: [],
+        finalAprobada: ["082020", "082021"] },
+    { id: "950605", name: "Física I", code: "950605", hours: 5, year: 2, period: "Anual",
+        cursarCursada: [], cursarAprobada: [],
+        finalAprobada: [] },
+    { id: "082026", name: "Paradigmas de Programación", code: "082026", hours: 4, year: 2, period: "Anual",
+        cursarCursada: ["082020", "082021"], cursarAprobada: [],
+        finalAprobada: ["082020", "082021"] },
+    { id: "951602", name: "Inglés I", code: "951602", hours: 4, year: 2, period: "1C",
+        cursarCursada: [], cursarAprobada: [],
+        finalAprobada: [] },
+    { id: "950704", name: "Probabilidad y Estadística", code: "950704", hours: 6, year: 2, period: "2C",
+        cursarCursada: ["950702", "950701"], cursarAprobada: [],
+        finalAprobada: ["950702", "950701"] },
+
+    // === 3° NIVEL ===
+    { id: "082028", name: "Diseño de Sistemas", code: "082028", hours: 6, year: 3, period: "Anual", integrador: true,
+        cursarCursada: ["082024", "082026"],
+        cursarAprobada: ["082021", "082023"],
+        finalAprobada: ["082024", "082026"] },
+    { id: "082027", name: "Sistemas Operativos", code: "082027", hours: 8, year: 3, period: "1C",
+        cursarCursada: ["082020", "082021", "082022"],
+        cursarAprobada: [],
+        finalAprobada: ["082020", "082021", "082022"] },
+    { id: "950606", name: "Física II", code: "950606", hours: 10, year: 3, period: "1C",
+        cursarCursada: ["950702", "950605"],
+        cursarAprobada: [],
+        finalAprobada: ["950702", "950605"] },
+    { id: "950309", name: "Economía", code: "950309", hours: 6, year: 3, period: "1C",
+        cursarCursada: ["082024"],
+        cursarAprobada: ["082021", "082023"],
+        finalAprobada: ["082024"] },
+    { id: "082030", name: "Gestión de Datos", code: "082030", hours: 8, year: 3, period: "2C",
+        cursarCursada: ["082024", "082026", "082025"],
+        cursarAprobada: ["082020", "082021", "082023"],
+        finalAprobada: ["082024", "082026", "082025"] },
+    { id: "951603", name: "Inglés II", code: "951603", hours: 4, year: 3, period: "2C",
+        cursarCursada: ["951602"],
+        cursarAprobada: [],
+        finalAprobada: ["951602"] },
+    { id: "082032", name: "Matemática Superior", code: "082032", hours: 8, year: 3, period: "2C",
+        cursarCursada: ["950703", "950701"],
+        cursarAprobada: [],
+        finalAprobada: ["950703"] },
+    { id: "950310", name: "Legislación", code: "950310", hours: 4, year: 3, period: "2C",
+        cursarCursada: ["082024", "081604"],
+        cursarAprobada: ["082023", "082021"],
+        finalAprobada: ["082024", "081604"] },
+    { id: "elec3_1", name: "Electiva 3° (1)", code: "Electiva", hours: 4, year: 3, period: "1C", electiva: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "elec3_2", name: "Electiva 3° (2)", code: "Electiva", hours: 4, year: 3, period: "2C", electiva: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+
+    // === 4° NIVEL ===
+    { id: "082036", name: "Administración de Recursos", code: "082036", hours: 6, year: 4, period: "Anual", integrador: true,
+        cursarCursada: ["082028", "082027", "950309"],
+        cursarAprobada: ["082022", "951602", "082024", "082023", "082026"],
+        finalAprobada: ["082028", "082027", "950309"] },
+    { id: "082038", name: "Ingeniería de Software", code: "082038", hours: 6, year: 4, period: "1C",
+        cursarCursada: ["950704", "082028", "082030"],
+        cursarAprobada: ["082024", "082025", "082026"],
+        finalAprobada: ["950704", "082028", "082030"] },
+    { id: "082033", name: "Teoría de Control", code: "082033", hours: 6, year: 4, period: "1C",
+        cursarCursada: ["081420", "082032"],
+        cursarAprobada: ["950703", "950606"],
+        finalAprobada: ["081420", "082032"] },
+    { id: "082029", name: "Comunicaciones", code: "082029", hours: 8, year: 4, period: "1C",
+        cursarCursada: ["082022", "950703", "950606"],
+        cursarAprobada: ["950701", "950605"],
+        finalAprobada: ["082022", "950703", "950606"] },
+    { id: "082031", name: "Redes de Información", code: "082031", hours: 8, year: 4, period: "2C",
+        cursarCursada: ["082027", "082029"],
+        cursarAprobada: ["082020", "082021", "082022", "950703", "950606"],
+        finalAprobada: ["082027", "082029"] },
+    { id: "082034", name: "Investigación Operativa", code: "082034", hours: 10, year: 4, period: "2C",
+        cursarCursada: ["950704", "082032"],
+        cursarAprobada: ["950703"],
+        finalAprobada: ["950704", "082032"] },
+    { id: "082041", name: "Simulación", code: "082041", hours: 8, year: 4, period: "2C",
+        cursarCursada: ["950704", "082032"],
+        cursarAprobada: ["950703"],
+        finalAprobada: ["950704", "082032"] },
+    { id: "elec4_1", name: "Electiva 4°", code: "Electiva", hours: 6, year: 4, period: "1C", electiva: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+
+    // === 5° NIVEL ===
+    { id: "082037", name: "Proyecto Final", code: "082037", hours: 6, year: 5, period: "Anual", integrador: true,
+        cursarCursada: ["950310", "082036", "082031", "082038"],
+        cursarAprobada: ["081604", "082023", "951601", "082024", "950704", "082028", "082027", "082029"],
+        finalAprobada: ["ALL"],
+        ultimaExigencia: true },
+    { id: "082040", name: "Inteligencia Artificial", code: "082040", hours: 6, year: 5, period: "1C",
+        cursarCursada: ["082034", "082041"],
+        cursarAprobada: ["950704", "082032"],
+        finalAprobada: ["082034", "082041"] },
+    { id: "082039", name: "Administración Gerencial", code: "082039", hours: 6, year: 5, period: "1C",
+        cursarCursada: ["082036", "082034", "082041"],
+        cursarAprobada: ["082028", "082027", "950309", "082032", "950704"],
+        finalAprobada: ["082036", "082034", "082041"] },
+    { id: "082035", name: "Sistemas de Gestión", code: "082035", hours: 8, year: 5, period: "1C",
+        cursarCursada: ["082036", "950704", "082034", "082041", "082028", "082032", "950309"],
+        cursarAprobada: ["082024", "082027", "082022", "082026", "951602", "082029"],
+        finalAprobada: ["082036", "082034", "082041"] },
+    { id: "elec5_1", name: "Electiva 5° (1)", code: "Electiva", hours: 6, year: 5, period: "1C", electiva: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "elec5_2", name: "Electiva 5° (2)", code: "Electiva", hours: 6, year: 5, period: "2C", electiva: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "elec5_3", name: "Electiva 5° (3)", code: "Electiva", hours: 6, year: 5, period: "2C", electiva: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "elec5_4", name: "Electiva 5° (4)", code: "Electiva", hours: 6, year: 5, period: "2C", electiva: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "elec5_5", name: "Electiva 5° (5)", code: "Electiva", hours: 6, year: 5, period: "2C", electiva: true,
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+];
+
+// ========== STATE ==========
+let state = {};
+
+function loadState() {
+    const saved = localStorage.getItem('utn-isi-progress');
+    if (saved) {
+        state = JSON.parse(saved);
+    } else {
+        subjects.forEach(s => state[s.id] = "none");
+    }
+    subjects.forEach(s => { if (!state[s.id]) state[s.id] = "none"; });
+}
+
+function saveState() {
+    localStorage.setItem('utn-isi-progress', JSON.stringify(state));
+}
+
+function getState(id) {
+    return state[id] || "none";
+}
+
+// Check if a subject can be cursada
+function canCursar(subject) {
+    if (subject.electiva) return true;
+    for (const reqId of subject.cursarCursada) {
+        const st = getState(reqId);
+        if (st !== "cursada" && st !== "aprobada") return false;
+    }
+    for (const reqId of subject.cursarAprobada) {
+        if (getState(reqId) !== "aprobada") return false;
+    }
+    return true;
+}
+
+function setState(subjectId, newState) {
+    const subject = subjects.find(s => s.id === subjectId);
+    if (!subject) return;
+    if (newState !== "none" && !canCursar(subject)) return;
+
+    // If setting to "none", also cascade-reset dependents that would be invalidated
+    if (newState === "none" || newState === "cursada") {
+        cascadeDowngrade(subjectId, newState);
+    }
+
+    state[subjectId] = newState;
+    saveState();
+    render();
+    closeTooltip();
+}
+
+// When downgrading a subject, check if any dependent subject loses its prerequisites
+function cascadeDowngrade(subjectId, newState) {
+    state[subjectId] = newState;
+    subjects.forEach(dep => {
+        if (dep.electiva) return;
+        const depState = getState(dep.id);
+        if (depState === "none") return;
+        if (!canCursar(dep)) {
+            state[dep.id] = "none";
+            cascadeDowngrade(dep.id, "none");
+        }
+    });
+}
+
+function resetAll() {
+    if (!confirm("¿Resetear todo el progreso?")) return;
+    subjects.forEach(s => state[s.id] = "none");
+    saveState();
+    render();
+}
+
+function exportData() {
+    const data = JSON.stringify(state, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'utn-isi-progreso.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importData() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                state = data;
+                subjects.forEach(s => { if (!state[s.id]) state[s.id] = "none"; });
+                saveState();
+                render();
+            } catch (err) {
+                alert("Error al importar archivo");
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
+// ========== STATS ==========
+function getStats() {
+    let totalMaterias = subjects.length;
+    let aprobadasCount = 0, cursadasCount = 0;
+    let totalHoras = 0, horasAprobadas = 0, horasCursadas = 0;
+
+    subjects.forEach(s => {
+        totalHoras += s.hours;
+        const st = getState(s.id);
+        if (st === "aprobada") { aprobadasCount++; horasAprobadas += s.hours; }
+        else if (st === "cursada") { cursadasCount++; horasCursadas += s.hours; }
+    });
+
+    return { totalMaterias, aprobadasCount, cursadasCount, totalHoras, horasAprobadas, horasCursadas };
+}
+
+function updateProgressBars() {
+    const stats = getStats();
+
+    const matAprobadaPct = (stats.aprobadasCount / stats.totalMaterias * 100);
+    const matCursadaPct = ((stats.aprobadasCount + stats.cursadasCount) / stats.totalMaterias * 100);
+    document.getElementById('materias-aprobada-bar').style.width = matAprobadaPct + '%';
+    document.getElementById('materias-cursada-bar').style.width = matCursadaPct + '%';
+    document.getElementById('materias-count').textContent = `${stats.aprobadasCount} / ${stats.totalMaterias}`;
+    document.getElementById('materias-detail').textContent = `${stats.aprobadasCount} aprobadas · ${stats.cursadasCount} cursadas`;
+
+    const horasAprobadaPct = (stats.horasAprobadas / stats.totalHoras * 100);
+    const horasCursadaPct = ((stats.horasAprobadas + stats.horasCursadas) / stats.totalHoras * 100);
+    document.getElementById('horas-aprobada-bar').style.width = horasAprobadaPct + '%';
+    document.getElementById('horas-cursada-bar').style.width = horasCursadaPct + '%';
+    document.getElementById('horas-count').textContent = `${stats.horasAprobadas} / ${stats.totalHoras} hs`;
+    document.getElementById('horas-detail').textContent = `${stats.horasAprobadas} hs aprobadas · ${stats.horasCursadas} hs cursadas`;
+
+    const pct = Math.round(stats.aprobadasCount / stats.totalMaterias * 100);
+    document.getElementById('pct-bar').style.width = pct + '%';
+    document.getElementById('pct-count').textContent = pct + '%';
+}
+
+// ========== TOOLTIP ==========
+function showTooltip(subjectId) {
+    const subject = subjects.find(s => s.id === subjectId);
+    if (!subject) return;
+
+    const periodLabel = subject.period === 'Anual' ? 'Anual' : subject.period === '1C' ? '1er Cuatrimestre' : '2do Cuatrimestre';
+    document.getElementById('tt-title').textContent = subject.name;
+    document.getElementById('tt-code').textContent = `${subject.code} · ${subject.hours} hs · ${periodLabel} · ${subject.year}° Nivel`;
+
+    let bodyHtml = '';
+
+    if (subject.electiva) {
+        bodyHtml = '<div class="tooltip-section"><div class="tooltip-section-title">Requisitos</div><p style="font-size:0.8rem;color:var(--text-dim)">Ver Asignaturas Electivas del nivel correspondiente</p></div>';
+    } else {
+        if (subject.cursarCursada.length > 0 || subject.cursarAprobada.length > 0) {
+            bodyHtml += '<div class="tooltip-section"><div class="tooltip-section-title">Requisitos para Cursar</div><ul class="tooltip-list">';
+            subject.cursarCursada.forEach(reqId => {
+                const req = subjects.find(s => s.id === reqId);
+                if (!req) return;
+                const st = getState(reqId);
+                const met = st === "cursada" || st === "aprobada";
+                bodyHtml += `<li class="${met ? 'met' : 'unmet'}">Cursada: ${req.name} ${met ? '✓' : '✗'}</li>`;
+            });
+            subject.cursarAprobada.forEach(reqId => {
+                const req = subjects.find(s => s.id === reqId);
+                if (!req) return;
+                const met = getState(reqId) === "aprobada";
+                bodyHtml += `<li class="${met ? 'met' : 'unmet'}">Aprobada: ${req.name} ${met ? '✓' : '✗'}</li>`;
+            });
+            bodyHtml += '</ul></div>';
+        }
+
+        if (subject.finalAprobada.length > 0) {
+            bodyHtml += '<div class="tooltip-section"><div class="tooltip-section-title">Requisitos para Final</div><ul class="tooltip-list">';
+            if (subject.finalAprobada.includes("ALL")) {
+                bodyHtml += '<li style="color:var(--year-5)">Todas las materias (Última Exigencia Académica)</li>';
+            } else {
+                subject.finalAprobada.forEach(reqId => {
+                    const req = subjects.find(s => s.id === reqId);
+                    if (!req) return;
+                    const met = getState(reqId) === "aprobada";
+                    bodyHtml += `<li class="${met ? 'met' : 'unmet'}">Aprobada: ${req.name} ${met ? '✓' : '✗'}</li>`;
+                });
+            }
+            bodyHtml += '</ul></div>';
+        }
+
+        if (subject.cursarCursada.length === 0 && subject.cursarAprobada.length === 0) {
+            bodyHtml += '<div class="tooltip-section"><p style="font-size:0.8rem;color:var(--text-dim)">Sin correlativas — Se puede cursar directamente</p></div>';
+        }
+    }
+
+    document.getElementById('tt-body').innerHTML = bodyHtml;
+
+    const currentState = getState(subject.id);
+    const canEnroll = canCursar(subject);
+
+    let actionsHtml = '';
+    actionsHtml += `<button class="tooltip-btn set-no-cursada ${currentState === 'none' ? 'active-state' : ''}" onclick="setState('${subject.id}','none')">No cursada</button>`;
+    actionsHtml += `<button class="tooltip-btn set-cursada ${currentState === 'cursada' ? 'active-state' : ''}" onclick="setState('${subject.id}','cursada')" ${!canEnroll && currentState === 'none' ? 'disabled style="opacity:0.3"' : ''}>Cursada</button>`;
+    actionsHtml += `<button class="tooltip-btn set-aprobada ${currentState === 'aprobada' ? 'active-state' : ''}" onclick="setState('${subject.id}','aprobada')" ${!canEnroll && currentState === 'none' ? 'disabled style="opacity:0.3"' : ''}>Aprobada</button>`;
+
+    document.getElementById('tt-actions').innerHTML = actionsHtml;
+    document.getElementById('tooltip-overlay').classList.add('active');
+}
+
+function closeTooltip(event) {
+    if (event && event.target !== document.getElementById('tooltip-overlay')) return;
+    document.getElementById('tooltip-overlay').classList.remove('active');
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') document.getElementById('tooltip-overlay').classList.remove('active');
+});
+
+// ========== TRANSITIVE REDUCTION ==========
+// Build a full directed graph from ALL correlatives (cursarCursada + cursarAprobada),
+// then remove edges A→C where a path A→...→C exists through other nodes.
+function computeReducedEdges() {
+    // Build adjacency: for each subject, all direct prerequisite IDs
+    const adjMap = {}; // target -> Set of source (prereq) IDs
+    const allEdges = [];
+
+    subjects.forEach(subject => {
+        if (subject.electiva) return;
+        const allReqs = [...new Set([...subject.cursarCursada, ...subject.cursarAprobada])];
+        allReqs.forEach(reqId => {
+            if (reqId === "ALL") return;
+            if (!subjects.find(s => s.id === reqId)) return;
+            allEdges.push({ from: reqId, to: subject.id });
+        });
+    });
+
+    // Build forward adjacency (from -> [to1, to2, ...])
+    const forward = {};
+    allEdges.forEach(e => {
+        if (!forward[e.from]) forward[e.from] = new Set();
+        forward[e.from].add(e.to);
+    });
+
+    // For a given node, find all reachable nodes (excluding direct)
+    function reachableBeyondDirect(startId, directTargets) {
+        // BFS/DFS from each direct target, collecting everything reachable
+        const reachable = new Set();
+        const stack = [];
+        directTargets.forEach(t => {
+            if (forward[t]) {
+                forward[t].forEach(next => {
+                    if (!reachable.has(next)) {
+                        reachable.add(next);
+                        stack.push(next);
+                    }
+                });
+            }
+        });
+        while (stack.length > 0) {
+            const node = stack.pop();
+            if (forward[node]) {
+                forward[node].forEach(next => {
+                    if (!reachable.has(next)) {
+                        reachable.add(next);
+                        stack.push(next);
+                    }
+                });
+            }
+        }
+        return reachable;
+    }
+
+    // Also need reverse: for each target, what sources go INTO it
+    const reverseAdj = {};
+    allEdges.forEach(e => {
+        if (!reverseAdj[e.to]) reverseAdj[e.to] = new Set();
+        reverseAdj[e.to].add(e.from);
+    });
+
+    // For each target node, check which of its incoming edges are redundant
+    // Edge (A -> C) is redundant if there's another prereq B of C such that A can reach B
+    // (meaning A -> ... -> B -> C exists)
+    const reduced = [];
+
+    subjects.forEach(subject => {
+        if (subject.electiva) return;
+        const prereqs = reverseAdj[subject.id];
+        if (!prereqs || prereqs.size === 0) return;
+
+        const prereqList = [...prereqs];
+
+        // For each prereq, check if it's reachable from any OTHER prereq
+        // Build reachability from each prereq backwards (in the forward graph)
+        // Actually: edge P -> S is redundant if there exists another prereq Q of S
+        // such that P is a prereq (transitively) of Q
+        // i.e., P can reach Q through the forward graph of prerequisites
+
+        // Build reverse reachability: for each prereq, what can reach it?
+        // Simpler: for prereq P of subject S, P->S is redundant if
+        // any other prereq Q of S has P as a transitive prereq
+        // i.e., P appears in the transitive closure of Q's prereqs (following reverseAdj backwards)
+
+        function getTransitivePrereqs(nodeId, visited = new Set()) {
+            if (visited.has(nodeId)) return visited;
+            visited.add(nodeId);
+            const prs = reverseAdj[nodeId];
+            if (prs) {
+                prs.forEach(p => getTransitivePrereqs(p, visited));
+            }
+            return visited;
+        }
+
+        // Cache transitive prereqs for each prereq of this subject
+        const transitivePrereqsCache = {};
+        prereqList.forEach(p => {
+            transitivePrereqsCache[p] = getTransitivePrereqs(p, new Set());
+        });
+
+        prereqList.forEach(p => {
+            let isRedundant = false;
+            for (const q of prereqList) {
+                if (q === p) continue;
+                // If P is in Q's transitive prereqs, then P->S is redundant (because P->...->Q->S)
+                if (transitivePrereqsCache[q].has(p)) {
+                    isRedundant = true;
+                    break;
+                }
+            }
+            if (!isRedundant) {
+                reduced.push({ from: p, to: subject.id });
+            }
+        });
+    });
+
+    return reduced;
+}
+
+// ========== RENDER ==========
+function render() {
+    const container = document.getElementById('map-container');
+    let html = '';
+
+    for (let year = 1; year <= 5; year++) {
+        const yearSubjects = subjects.filter(s => s.year === year);
+
+        const yearTotal = yearSubjects.length;
+        const yearAprobadas = yearSubjects.filter(s => getState(s.id) === "aprobada").length;
+        const yearPct = Math.round(yearAprobadas / yearTotal * 100);
+
+        html += `<div class="year-row">`;
+        html += `<div class="year-label year-${year}-label">${year}° Nivel
+            <div class="year-progress">
+                <div class="year-progress-bar"><div class="year-progress-fill" style="width:${yearPct}%;background:var(--year-${year})"></div></div>
+                <div class="year-progress-text">${yearAprobadas}/${yearTotal}</div>
+            </div>
+        </div>`;
+
+        html += `<div class="year-subjects">`;
+        yearSubjects.sort((a, b) => (b.integrador ? 1 : 0) - (a.integrador ? 1 : 0));
+        yearSubjects.forEach(s => { html += renderCard(s); });
+        html += `</div></div>`;
+    }
+
+    container.innerHTML = html;
+    updateProgressBars();
+    drawArrows();
+}
+
+function renderCard(subject) {
+    const st = getState(subject.id);
+    const locked = !canCursar(subject) && st === "none";
+    const stateClass = locked ? "locked" : (st === "none" ? "no-cursada" : st);
+
+    const periodLabel = subject.period === 'Anual' ? 'Anual' : subject.period === '1C' ? '1° Cuat' : '2° Cuat';
+
+    let html = `<div class="subject-card ${stateClass}" data-id="${subject.id}" onclick="showTooltip('${subject.id}')">`;
+    html += `<div class="subject-state-indicator"></div>`;
+
+    if (subject.integrador) {
+        html += `<div class="integrador-badge">Integradora</div>`;
+    }
+
+    if (subject.electiva) {
+        html += `<span class="electiva-badge">Electiva</span>`;
+    }
+
+    html += `<div class="subject-name">${subject.name}</div>`;
+    html += `<div class="subject-meta">`;
+    html += `<span class="subject-code">${subject.code}</span>`;
+    html += `<span class="subject-period-tag">${periodLabel}</span>`;
+    html += `<span class="subject-hours">${subject.hours} hs</span>`;
+    html += `</div>`;
+
+    if (subject.ultimaExigencia) {
+        html += `<div class="ultima-exigencia">Última Exigencia Académica</div>`;
+    }
+
+    html += `</div>`;
+    return html;
+}
+
+// ========== ARROWS (SVG) ==========
+function drawArrows() {
+    const existingSvg = document.querySelector('.arrows-svg');
+    if (existingSvg) existingSvg.remove();
+
+    const container = document.getElementById('map-container');
+    const containerRect = container.getBoundingClientRect();
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.classList.add('arrows-svg');
+    svg.setAttribute('width', containerRect.width);
+    svg.setAttribute('height', container.scrollHeight);
+    svg.style.height = container.scrollHeight + 'px';
+
+    // Arrowhead markers
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    ['default', 'active', 'cursada'].forEach(type => {
+        const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+        marker.setAttribute('id', `arrow-${type}`);
+        marker.setAttribute('viewBox', '0 0 10 7');
+        marker.setAttribute('refX', '10');
+        marker.setAttribute('refY', '3.5');
+        marker.setAttribute('markerWidth', '8');
+        marker.setAttribute('markerHeight', '6');
+        marker.setAttribute('orient', 'auto-start-reverse');
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', 'M 0 0 L 10 3.5 L 0 7 z');
+        const colors = { default: 'var(--border)', active: 'var(--aprobada)', cursada: 'var(--cursada)' };
+        p.setAttribute('fill', colors[type]);
+        p.style.opacity = type === 'default' ? '0.4' : '0.7';
+        marker.appendChild(p);
+        defs.appendChild(marker);
+    });
+    svg.appendChild(defs);
+
+    // Use transitive reduction for cleaner arrows
+    const reducedEdges = computeReducedEdges();
+
+    reducedEdges.forEach(conn => {
+        const fromEl = container.querySelector(`[data-id="${conn.from}"]`);
+        const toEl = container.querySelector(`[data-id="${conn.to}"]`);
+        if (!fromEl || !toEl) return;
+
+        const fromRect = fromEl.getBoundingClientRect();
+        const toRect = toEl.getBoundingClientRect();
+
+        const x1 = fromRect.left + fromRect.width / 2 - containerRect.left;
+        const y1 = fromRect.bottom - containerRect.top;
+        const x2 = toRect.left + toRect.width / 2 - containerRect.left;
+        const y2 = toRect.top - containerRect.top;
+
+        const dy = y2 - y1;
+        const cp1y = y1 + dy * 0.4;
+        const cp2y = y1 + dy * 0.6;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${cp1y}, ${x2} ${cp2y}, ${x2} ${y2}`);
+
+        const fromState = getState(conn.from);
+        if (fromState === "aprobada") {
+            path.classList.add('active');
+            path.setAttribute('marker-end', 'url(#arrow-active)');
+        } else if (fromState === "cursada") {
+            path.classList.add('cursada-arrow');
+            path.setAttribute('marker-end', 'url(#arrow-cursada)');
+        } else {
+            path.setAttribute('marker-end', 'url(#arrow-default)');
+        }
+
+        svg.appendChild(path);
+    });
+
+    container.insertBefore(svg, container.firstChild);
+}
+
+// Debounced resize
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => drawArrows(), 200);
+});
+
+// ========== INIT ==========
+loadState();
+render();
+</script>
+
+</body>
+</html>
