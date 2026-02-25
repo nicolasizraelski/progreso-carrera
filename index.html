@@ -148,6 +148,26 @@
             border-color: var(--accent);
         }
 
+        .hours-toggle { display: flex; align-items: center; gap: 8px; }
+        .toggle-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; cursor: pointer; inset: 0;
+            background: var(--border); border-radius: 20px; transition: 0.3s;
+        }
+        .toggle-slider::before {
+            content: ''; position: absolute; height: 14px; width: 14px;
+            left: 3px; bottom: 3px; background: var(--text-dim);
+            border-radius: 50%; transition: 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); background: white; }
+        .toggle-text { font-size: 0.75rem; color: var(--text-dim); line-height: 1.2; }
+        .toggle-disclaimer { font-size: 0.65rem; color: var(--cursada); opacity: 0.8; }
+
+        body.hours-hidden .progress-item-horas { display: none; }
+        body.hours-hidden .subject-hours { display: none; }
+
         /* Plan switcher */
         .plan-switcher {
             display: flex;
@@ -376,7 +396,7 @@
                 </div>
                 <div class="progress-detail" id="materias-detail">0 aprobadas · 0 cursadas</div>
             </div>
-            <div class="progress-item">
+            <div class="progress-item progress-item-horas">
                 <div class="progress-label">
                     <span>Hs Totales Cursada</span>
                     <span class="progress-numbers" id="horas-count">0 / 0 hs</span>
@@ -398,6 +418,16 @@
             </div>
         </div>
         <div class="controls">
+            <div class="hours-toggle">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="hours-toggle" onchange="toggleHours()">
+                    <span class="toggle-slider"></span>
+                </label>
+                <div>
+                    <div class="toggle-text">Mostrar horas</div>
+                    <div class="toggle-disclaimer">Datos no oficiales</div>
+                </div>
+            </div>
             <button class="btn" onclick="resetAll()">Resetear</button>
             <button class="btn" onclick="exportData()">Exportar</button>
         </div>
@@ -577,6 +607,19 @@ const plans = {
 let currentPlan = 'k08';
 let subjects = plans[currentPlan].subjects;
 let state = {};
+let showHours = localStorage.getItem('utn-isi-show-hours') !== 'false';
+
+function toggleHours() {
+    showHours = document.getElementById('hours-toggle').checked;
+    localStorage.setItem('utn-isi-show-hours', showHours);
+    document.body.classList.toggle('hours-hidden', !showHours);
+    render();
+}
+
+function initHoursToggle() {
+    document.getElementById('hours-toggle').checked = showHours;
+    document.body.classList.toggle('hours-hidden', !showHours);
+}
 
 function switchPlan(planId) {
     // Save current state first
@@ -707,7 +750,8 @@ function showTooltip(subjectId) {
     if (!subject) return;
     const periodLabel = subject.period === 'Anual' ? 'Anual' : subject.period === '1C' ? '1er Cuatrimestre' : subject.period === '2C' ? '2do Cuatrimestre' : 'Cuatrimestral';
     document.getElementById('tt-title').textContent = subject.name;
-    document.getElementById('tt-code').textContent = `N° ${subject.code} · ${subject.hours} hs/sem · ${subject.totalHours} hs totales · ${periodLabel} · ${subject.year}° Nivel`;
+    const hoursPart = showHours ? ` · ${subject.hours} hs/sem · ${subject.totalHours} hs totales` : '';
+    document.getElementById('tt-code').textContent = `N° ${subject.code}${hoursPart} · ${periodLabel} · ${subject.year}° Nivel`;
 
     let bodyHtml = '';
     if (subject.electiva) {
@@ -937,6 +981,7 @@ document.getElementById('btn-k08').classList.toggle('active', currentPlan === 'k
 document.getElementById('btn-k23').classList.toggle('active', currentPlan === 'k23');
 document.getElementById('plan-subtitle').textContent = `UTN FRBA — ${plans[currentPlan].label}`;
 loadState();
+initHoursToggle();
 render();
 </script>
 
