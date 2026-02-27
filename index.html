@@ -20,6 +20,9 @@
             --aprobada: #22c55e;
             --aprobada-bg: rgba(34, 197, 94, 0.15);
             --aprobada-border: #22c55e;
+            --cursando: #e0e4f0;
+            --cursando-bg: rgba(224, 228, 240, 0.1);
+            --cursando-border: rgba(224, 228, 240, 0.5);
             --locked: #ff4757;
             --locked-bg: rgba(255, 71, 87, 0.08);
             --accent: #6366f1;
@@ -245,6 +248,7 @@
         }
 
         .arrows-svg path.active { stroke: var(--aprobada); opacity: 0.6; stroke-width: 1.8; }
+        .arrows-svg path.cursando-arrow { stroke: var(--cursando); opacity: 0.4; }
         .arrows-svg path.cursada-arrow { stroke: var(--cursada); opacity: 0.5; }
         .arrows-svg marker path { opacity: 1; }
 
@@ -307,6 +311,7 @@
         .subject-card.locked { opacity: 0.4; border-color: rgba(255, 71, 87, 0.3); cursor: not-allowed; }
         .subject-card.locked:hover { transform: none; box-shadow: none; }
         .subject-card.no-cursada { border-color: var(--border); }
+        .subject-card.cursando { border-color: var(--cursando-border); background: var(--cursando-bg); box-shadow: 0 0 12px rgba(224, 228, 240, 0.08); }
         .subject-card.cursada { border-color: var(--cursada-border); background: var(--cursada-bg); box-shadow: 0 0 12px rgba(184, 134, 11, 0.1); }
         .subject-card.aprobada { border-color: var(--aprobada-border); background: var(--aprobada-bg); box-shadow: 0 0 12px rgba(34, 197, 94, 0.1); }
 
@@ -327,6 +332,7 @@
 
         .subject-state-indicator { position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; }
         .subject-card.no-cursada .subject-state-indicator { background: var(--no-cursada); border: 1px solid var(--border); }
+        .subject-card.cursando .subject-state-indicator { background: var(--cursando); box-shadow: 0 0 6px var(--cursando); }
         .subject-card.cursada .subject-state-indicator { background: var(--cursada); box-shadow: 0 0 6px var(--cursada); }
         .subject-card.aprobada .subject-state-indicator { background: var(--aprobada); box-shadow: 0 0 6px var(--aprobada); }
         .subject-card.locked .subject-state-indicator { background: var(--locked); opacity: 0.5; }
@@ -349,6 +355,7 @@
         .tooltip-actions { display: flex; gap: 8px; margin-top: 18px; }
         .tooltip-btn { flex: 1; padding: 9px; border-radius: 7px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; }
         .tooltip-btn.set-no-cursada { background: var(--no-cursada); color: var(--text); }
+        .tooltip-btn.set-cursando { background: rgba(224, 228, 240, 0.15); color: var(--cursando); border: 1px solid var(--cursando-border); }
         .tooltip-btn.set-cursada { background: rgba(184, 134, 11, 0.3); color: var(--cursada); border: 1px solid var(--cursada); }
         .tooltip-btn.set-aprobada { background: rgba(34, 197, 94, 0.3); color: var(--aprobada); border: 1px solid var(--aprobada); }
         .tooltip-btn:hover { filter: brightness(1.2); }
@@ -418,6 +425,7 @@
             </div>
         </div>
         <div class="controls">
+            <!-- Toggle de horas (datos no oficiales — descomentar cuando se verifiquen)
             <div class="hours-toggle">
                 <label class="toggle-switch">
                     <input type="checkbox" id="hours-toggle" onchange="toggleHours()">
@@ -428,8 +436,9 @@
                     <div class="toggle-disclaimer">Datos no oficiales</div>
                 </div>
             </div>
+            -->
             <button class="btn" onclick="resetAll()">Resetear</button>
-            <button class="btn" onclick="exportData()">Exportar</button>
+            <!-- <button class="btn" onclick="exportData()">Exportar</button> -->
         </div>
     </div>
 </div>
@@ -437,6 +446,7 @@
 <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:var(--locked);opacity:0.5"></div> Bloqueada</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--no-cursada);border:1px solid var(--border)"></div> Habilitada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cursando)"></div> Cursando</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--cursada)"></div> Cursada (Regular)</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--aprobada)"></div> Aprobada</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--integrador)"></div> Integradora</div>
@@ -607,7 +617,7 @@ const plans = {
 let currentPlan = 'k08';
 let subjects = plans[currentPlan].subjects;
 let state = {};
-let showHours = localStorage.getItem('utn-isi-show-hours') !== 'false';
+let showHours = localStorage.getItem('utn-isi-show-hours') === 'true';
 
 function toggleHours() {
     showHours = document.getElementById('hours-toggle').checked;
@@ -617,7 +627,8 @@ function toggleHours() {
 }
 
 function initHoursToggle() {
-    document.getElementById('hours-toggle').checked = showHours;
+    const el = document.getElementById('hours-toggle');
+    if (el) el.checked = showHours;
     document.body.classList.toggle('hours-hidden', !showHours);
 }
 
@@ -671,7 +682,7 @@ function setState(subjectId, newState) {
     const subject = subjects.find(s => s.id === subjectId);
     if (!subject) return;
     if (newState !== "none" && !canCursar(subject)) return;
-    if (newState === "none" || newState === "cursada") cascadeDowngrade(subjectId, newState);
+    if (newState === "none" || newState === "cursando" || newState === "cursada") cascadeDowngrade(subjectId, newState);
     state[subjectId] = newState;
     saveState();
     render();
@@ -711,16 +722,17 @@ function exportData() {
 
 // ========== STATS ==========
 function getStats() {
-    let totalMaterias = subjects.length, aprobadasCount = 0, cursadasCount = 0;
-    let totalHoras = 0, horasAprobadas = 0, horasCursadas = 0;
+    let totalMaterias = subjects.length, aprobadasCount = 0, cursadasCount = 0, cursandoCount = 0;
+    let totalHoras = 0, horasAprobadas = 0, horasCursadas = 0, horasCursando = 0;
     subjects.forEach(s => {
         const hs = s.totalHours;
         totalHoras += hs;
         const st = getState(s.id);
         if (st === "aprobada") { aprobadasCount++; horasAprobadas += hs; }
         else if (st === "cursada") { cursadasCount++; horasCursadas += hs; }
+        else if (st === "cursando") { cursandoCount++; horasCursando += hs; }
     });
-    return { totalMaterias, aprobadasCount, cursadasCount, totalHoras, horasAprobadas, horasCursadas };
+    return { totalMaterias, aprobadasCount, cursadasCount, cursandoCount, totalHoras, horasAprobadas, horasCursadas, horasCursando };
 }
 
 function updateProgressBars() {
@@ -730,7 +742,7 @@ function updateProgressBars() {
     document.getElementById('materias-aprobada-bar').style.width = matAprobadaPct + '%';
     document.getElementById('materias-cursada-bar').style.width = matCursadaPct + '%';
     document.getElementById('materias-count').textContent = `${stats.aprobadasCount} / ${stats.totalMaterias}`;
-    document.getElementById('materias-detail').textContent = `${stats.aprobadasCount} aprobadas · ${stats.cursadasCount} cursadas`;
+    document.getElementById('materias-detail').textContent = `${stats.aprobadasCount} aprobadas · ${stats.cursadasCount} cursadas` + (stats.cursandoCount ? ` · ${stats.cursandoCount} cursando` : '');
 
     const horasAprobadaPct = (stats.horasAprobadas / stats.totalHoras * 100);
     const horasCursadaPct = ((stats.horasAprobadas + stats.horasCursadas) / stats.totalHoras * 100);
@@ -798,6 +810,7 @@ function showTooltip(subjectId) {
     const canEnroll = canCursar(subject);
     let actionsHtml = '';
     actionsHtml += `<button class="tooltip-btn set-no-cursada ${currentState === 'none' ? 'active-state' : ''}" onclick="setState('${subject.id}','none')">No cursada</button>`;
+    actionsHtml += `<button class="tooltip-btn set-cursando ${currentState === 'cursando' ? 'active-state' : ''}" onclick="setState('${subject.id}','cursando')" ${!canEnroll && currentState === 'none' ? 'disabled style="opacity:0.3"' : ''}>Cursando</button>`;
     actionsHtml += `<button class="tooltip-btn set-cursada ${currentState === 'cursada' ? 'active-state' : ''}" onclick="setState('${subject.id}','cursada')" ${!canEnroll && currentState === 'none' ? 'disabled style="opacity:0.3"' : ''}>Cursada</button>`;
     actionsHtml += `<button class="tooltip-btn set-aprobada ${currentState === 'aprobada' ? 'active-state' : ''}" onclick="setState('${subject.id}','aprobada')" ${!canEnroll && currentState === 'none' ? 'disabled style="opacity:0.3"' : ''}>Aprobada</button>`;
     document.getElementById('tt-actions').innerHTML = actionsHtml;
@@ -926,7 +939,7 @@ function drawArrows() {
     svg.style.height = container.scrollHeight + 'px';
 
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    ['default', 'active', 'cursada'].forEach(type => {
+    ['default', 'active', 'cursando', 'cursada'].forEach(type => {
         const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
         marker.setAttribute('id', `arrow-${type}`);
         marker.setAttribute('viewBox', '0 0 10 7');
@@ -937,7 +950,7 @@ function drawArrows() {
         marker.setAttribute('orient', 'auto-start-reverse');
         const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         p.setAttribute('d', 'M 0 0 L 10 3.5 L 0 7 z');
-        p.setAttribute('fill', { default: 'var(--border)', active: 'var(--aprobada)', cursada: 'var(--cursada)' }[type]);
+        p.setAttribute('fill', { default: 'var(--border)', active: 'var(--aprobada)', cursando: 'var(--cursando)', cursada: 'var(--cursada)' }[type]);
         p.style.opacity = type === 'default' ? '0.4' : '0.7';
         marker.appendChild(p);
         defs.appendChild(marker);
@@ -964,6 +977,7 @@ function drawArrows() {
         const fromState = getState(conn.from);
         if (fromState === "aprobada") { path.classList.add('active'); path.setAttribute('marker-end', 'url(#arrow-active)'); }
         else if (fromState === "cursada") { path.classList.add('cursada-arrow'); path.setAttribute('marker-end', 'url(#arrow-cursada)'); }
+        else if (fromState === "cursando") { path.classList.add('cursando-arrow'); path.setAttribute('marker-end', 'url(#arrow-cursando)'); }
         else { path.setAttribute('marker-end', 'url(#arrow-default)'); }
         svg.appendChild(path);
     });
