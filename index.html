@@ -536,25 +536,28 @@ const subjectsK08 = [
 // Períodos y horas reales semanales según imagen FRBA + Ordenanza 1877
 // "Cuat" = cuatrimestral (horas reales de cursada). Annualizado = hours / 2
 const subjectsK23 = [
-    // 1° NIVEL (N° 1-8) — totalHours = h reloj según Ord. 1877. Total nivel: 768
+    // Correlativas: PDF oficial "Correlativas-plan-2023". Año de cada materia: página oficial "Plan de Estudios 2023".
+    // El N° (code) es el identificador oficial de la asignatura (columna "Nivel/Nº" del PDF) y no coincide con el año de cursada.
+
+    // 1° AÑO
     { id: "k23_1",  name: "Análisis Matemático I",           code: "1",  hours: 5, totalHours: 120, year: 1, period: "Anual", cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "k23_2",  name: "Álgebra y Geometría Analítica",   code: "2",  hours: 5, totalHours: 120, year: 1, period: "Anual", cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "k23_3",  name: "Física I",                        code: "3",  hours: 5, totalHours: 120, year: 1, period: "Anual", cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
-    { id: "k23_4",  name: "Inglés I",                        code: "4",  hours: 4, totalHours: 48, year: 1, period: "Cuat", cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
+    { id: "k23_11", name: "Ingeniería y Sociedad",           code: "11", hours: 4, totalHours: 48, year: 1, period: "Cuat",
+        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "k23_5",  name: "Lógica y Estructuras Discretas",  code: "5",  hours: 3, totalHours: 72, year: 1, period: "Anual", cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "k23_6",  name: "Algoritmos y Estructuras de Datos", code: "6", hours: 5, totalHours: 120, year: 1, period: "Anual", cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "k23_7",  name: "Arquitectura de Computadoras",    code: "7",  hours: 4, totalHours: 96, year: 1, period: "Anual", cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "k23_8",  name: "Sistemas y Procesos de Negocio",  code: "8",  hours: 3, totalHours: 72, year: 1, period: "Anual", integrador: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
 
-    // 2° NIVEL (N° 9-16) — Total nivel: 768
+    // 2° AÑO
     { id: "k23_9",  name: "Análisis Matemático II",          code: "9",  hours: 5, totalHours: 120, year: 2, period: "Anual",
         cursarCursada: ["k23_1", "k23_2"], cursarAprobada: [], finalAprobada: ["k23_1", "k23_2"] },
     { id: "k23_10", name: "Física II",                       code: "10", hours: 5, totalHours: 120, year: 2, period: "Anual",
         cursarCursada: ["k23_1", "k23_3"], cursarAprobada: [], finalAprobada: ["k23_1", "k23_3"] },
-    { id: "k23_11", name: "Ingeniería y Sociedad",           code: "11", hours: 4, totalHours: 48, year: 2, period: "Cuat",
-        cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
-    { id: "k23_12", name: "Inglés II",                       code: "12", hours: 4, totalHours: 48, year: 2, period: "Cuat",
-        cursarCursada: ["k23_4"], cursarAprobada: [], finalAprobada: ["k23_4"] },
+    { id: "k23_17", name: "Probabilidad y Estadística",      code: "17", hours: 3, totalHours: 72, year: 2, period: "Anual",
+        cursarCursada: ["k23_1", "k23_2"], cursarAprobada: [], finalAprobada: ["k23_1", "k23_2"] },
+    { id: "k23_4",  name: "Inglés I",                        code: "4",  hours: 4, totalHours: 48, year: 2, period: "Cuat", cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "k23_13", name: "Sintaxis y Semántica de los Lenguajes", code: "13", hours: 8, totalHours: 96, year: 2, period: "Cuat",
         cursarCursada: ["k23_5", "k23_6"], cursarAprobada: [], finalAprobada: ["k23_5", "k23_6"] },
     { id: "k23_14", name: "Paradigmas de Programación",      code: "14", hours: 8, totalHours: 96, year: 2, period: "Cuat",
@@ -564,59 +567,58 @@ const subjectsK23 = [
     { id: "k23_16", name: "Análisis de Sistemas de Información", code: "16", hours: 6, totalHours: 144, year: 2, period: "Anual", integrador: true,
         cursarCursada: ["k23_6", "k23_8"], cursarAprobada: [], finalAprobada: ["k23_6", "k23_8"] },
 
-    // 3° NIVEL (N° 17-23) — Total nivel: 744
-    { id: "k23_17", name: "Probabilidad y Estadística",      code: "17", hours: 3, totalHours: 72, year: 3, period: "Anual",
-        cursarCursada: ["k23_1", "k23_2"], cursarAprobada: ["k23_1", "k23_2"], finalAprobada: ["k23_1", "k23_2"] },
+    // 3° AÑO
     { id: "k23_18", name: "Economía",                        code: "18", hours: 6, totalHours: 72, year: 3, period: "Cuat",
         cursarCursada: [], cursarAprobada: ["k23_1", "k23_2"], finalAprobada: ["k23_1", "k23_2"] },
     { id: "k23_19", name: "Bases de Datos",                  code: "19", hours: 8, totalHours: 96, year: 3, period: "Cuat",
-        cursarCursada: ["k23_13", "k23_16"], cursarAprobada: ["k23_5", "k23_6"], finalAprobada: ["k23_13", "k23_16"] },
+        cursarCursada: ["k23_13", "k23_16"], cursarAprobada: ["k23_5", "k23_6"], finalAprobada: ["k23_13", "k23_16", "k23_5", "k23_6"] },
+    { id: "k23_12", name: "Inglés II",                       code: "12", hours: 4, totalHours: 48, year: 3, period: "Cuat",
+        cursarCursada: ["k23_4"], cursarAprobada: [], finalAprobada: ["k23_4"] },
     { id: "k23_20", name: "Desarrollo de Software",          code: "20", hours: 4, totalHours: 96, year: 3, period: "Cuat",
-        cursarCursada: ["k23_14", "k23_16"], cursarAprobada: ["k23_5", "k23_6"], finalAprobada: ["k23_14", "k23_16"] },
+        cursarCursada: ["k23_14", "k23_16"], cursarAprobada: ["k23_5", "k23_6"], finalAprobada: ["k23_14", "k23_16", "k23_5", "k23_6"] },
     { id: "k23_21", name: "Comunicación de Datos",           code: "21", hours: 8, totalHours: 96, year: 3, period: "Cuat",
         cursarCursada: [], cursarAprobada: ["k23_3", "k23_7"], finalAprobada: ["k23_3", "k23_7"] },
-    { id: "k23_22", name: "Análisis Numérico",               code: "22", hours: 3, totalHours: 72, year: 3, period: "Cuat",
-        cursarCursada: ["k23_9"], cursarAprobada: ["k23_1", "k23_2"], finalAprobada: ["k23_9"] },
+    { id: "k23_26", name: "Redes de Datos",                  code: "26", hours: 8, totalHours: 96, year: 3, period: "Cuat",
+        cursarCursada: ["k23_15", "k23_21"], cursarAprobada: [], finalAprobada: ["k23_15", "k23_21"] },
     { id: "k23_23", name: "Diseño de Sistemas de Información", code: "23", hours: 6, totalHours: 144, year: 3, period: "Anual", integrador: true,
-        cursarCursada: ["k23_14", "k23_16"], cursarAprobada: ["k23_4", "k23_6", "k23_8"], finalAprobada: ["k23_14", "k23_16"] },
+        cursarCursada: ["k23_14", "k23_16"], cursarAprobada: ["k23_4", "k23_6", "k23_8"], finalAprobada: ["k23_14", "k23_16", "k23_4", "k23_6", "k23_8"] },
     { id: "elec3k23_1", name: "Electiva 3°", code: "Electiva", hours: 8, totalHours: 96, year: 3, period: "Cuat", electiva: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
 
-    // 4° NIVEL (N° 24-30) — Total nivel: 744
+    // 4° AÑO
     { id: "k23_24", name: "Legislación",                     code: "24", hours: 4, totalHours: 48, year: 4, period: "Cuat",
         cursarCursada: ["k23_11"], cursarAprobada: [], finalAprobada: ["k23_11"] },
     { id: "k23_25", name: "Ingeniería y Calidad de Software", code: "25", hours: 6, totalHours: 72, year: 4, period: "Cuat",
-        cursarCursada: ["k23_19", "k23_20", "k23_23"], cursarAprobada: ["k23_13", "k23_14"], finalAprobada: ["k23_19", "k23_20", "k23_23"] },
-    { id: "k23_26", name: "Redes de Datos",                  code: "26", hours: 8, totalHours: 96, year: 4, period: "Cuat",
-        cursarCursada: ["k23_15", "k23_21"], cursarAprobada: [], finalAprobada: ["k23_15", "k23_21"] },
+        cursarCursada: ["k23_19", "k23_20", "k23_23"], cursarAprobada: ["k23_13", "k23_14"], finalAprobada: ["k23_19", "k23_20", "k23_23", "k23_13", "k23_14"] },
+    { id: "k23_32", name: "Ciencia de Datos",                code: "32", hours: 6, totalHours: 72, year: 4, period: "Cuat",
+        cursarCursada: ["k23_28"], cursarAprobada: ["k23_17", "k23_19"], finalAprobada: ["k23_28", "k23_17", "k23_19"] },
+    { id: "k23_22", name: "Análisis Numérico",               code: "22", hours: 3, totalHours: 72, year: 4, period: "Cuat",
+        cursarCursada: ["k23_9"], cursarAprobada: ["k23_1", "k23_2"], finalAprobada: ["k23_9", "k23_1", "k23_2"] },
     { id: "k23_27", name: "Investigación Operativa",         code: "27", hours: 8, totalHours: 96, year: 4, period: "Cuat",
         cursarCursada: ["k23_17", "k23_22"], cursarAprobada: [], finalAprobada: ["k23_17", "k23_22"] },
     { id: "k23_28", name: "Simulación",                      code: "28", hours: 6, totalHours: 72, year: 4, period: "Cuat",
-        cursarCursada: ["k23_17"], cursarAprobada: ["k23_9"], finalAprobada: ["k23_17"] },
+        cursarCursada: ["k23_17"], cursarAprobada: ["k23_9"], finalAprobada: ["k23_17", "k23_9"] },
     { id: "k23_29", name: "Tecnologías para la Automatización", code: "29", hours: 6, totalHours: 72, year: 4, period: "Cuat",
-        cursarCursada: ["k23_10", "k23_22"], cursarAprobada: ["k23_9"], finalAprobada: ["k23_10", "k23_22"] },
+        cursarCursada: ["k23_10", "k23_22"], cursarAprobada: ["k23_9"], finalAprobada: ["k23_10", "k23_22", "k23_9"] },
     { id: "k23_30", name: "Administración de Sistemas de Información", code: "30", hours: 6, totalHours: 144, year: 4, period: "Anual", integrador: true,
-        cursarCursada: ["k23_18", "k23_23"], cursarAprobada: ["k23_16"], finalAprobada: ["k23_18", "k23_23"] },
+        cursarCursada: ["k23_18", "k23_23"], cursarAprobada: ["k23_16"], finalAprobada: ["k23_18", "k23_23", "k23_16"] },
     { id: "elec4k23_1", name: "Electiva 4° (1)", code: "Electiva", hours: 6, totalHours: 72, year: 4, period: "Cuat", electiva: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "elec4k23_2", name: "Electiva 4° (2)", code: "Electiva", hours: 6, totalHours: 72, year: 4, period: "Cuat", electiva: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
 
-    // 5° NIVEL (N° 31-36) — Total nivel: 768
+    // 5° AÑO
     { id: "k23_31", name: "Inteligencia Artificial",         code: "31", hours: 6, totalHours: 72, year: 5, period: "Cuat",
-        cursarCursada: ["k23_28"], cursarAprobada: ["k23_17", "k23_22"], finalAprobada: ["k23_28"] },
-    { id: "k23_32", name: "Ciencia de Datos",                code: "32", hours: 6, totalHours: 72, year: 5, period: "Cuat",
-        cursarCursada: ["k23_28"], cursarAprobada: ["k23_17", "k23_19"], finalAprobada: ["k23_28"] },
+        cursarCursada: ["k23_28"], cursarAprobada: ["k23_17", "k23_22"], finalAprobada: ["k23_28", "k23_17", "k23_22"] },
     { id: "k23_33", name: "Sistemas de Gestión",             code: "33", hours: 8, totalHours: 96, year: 5, period: "Cuat",
-        cursarCursada: ["k23_18", "k23_27"], cursarAprobada: ["k23_23"], finalAprobada: ["k23_18", "k23_27"] },
+        cursarCursada: ["k23_18", "k23_27"], cursarAprobada: ["k23_23"], finalAprobada: ["k23_18", "k23_27", "k23_23"] },
     { id: "k23_34", name: "Gestión Gerencial",               code: "34", hours: 6, totalHours: 72, year: 5, period: "Cuat",
-        cursarCursada: ["k23_24", "k23_30"], cursarAprobada: ["k23_18"], finalAprobada: ["k23_24", "k23_30"] },
+        cursarCursada: ["k23_24", "k23_30"], cursarAprobada: ["k23_18"], finalAprobada: ["k23_24", "k23_30", "k23_18"] },
     { id: "k23_35", name: "Seguridad en los Sistemas de Información", code: "35", hours: 6, totalHours: 72, year: 5, period: "Cuat",
-        cursarCursada: ["k23_26", "k23_30"], cursarAprobada: ["k23_20", "k23_21"], finalAprobada: ["k23_26", "k23_30"] },
+        cursarCursada: ["k23_26", "k23_30"], cursarAprobada: ["k23_20", "k23_21"], finalAprobada: ["k23_26", "k23_30", "k23_20", "k23_21"] },
     { id: "k23_36", name: "Proyecto Final", code: "36", hours: 6, totalHours: 144, year: 5, period: "Anual", integrador: true,
         cursarCursada: ["k23_25", "k23_26", "k23_30"], cursarAprobada: ["k23_12", "k23_20", "k23_23"], finalAprobada: ["ALL"], ultimaExigencia: true },
     { id: "elec5k23_1", name: "Electiva 5° (1)", code: "Electiva", hours: 4, totalHours: 48, year: 5, period: "Cuat", electiva: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "elec5k23_2", name: "Electiva 5° (2)", code: "Electiva", hours: 4, totalHours: 48, year: 5, period: "Cuat", electiva: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "elec5k23_3", name: "Electiva 5° (3)", code: "Electiva", hours: 4, totalHours: 48, year: 5, period: "Cuat", electiva: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
     { id: "elec5k23_4", name: "Electiva 5° (4)", code: "Electiva", hours: 4, totalHours: 48, year: 5, period: "Cuat", electiva: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
-    { id: "elec5k23_5", name: "Electiva 5° (5)", code: "Electiva", hours: 4, totalHours: 48, year: 5, period: "Cuat", electiva: true, cursarCursada: [], cursarAprobada: [], finalAprobada: [] },
 ];
 
 // ========== PLAN MANAGEMENT ==========
